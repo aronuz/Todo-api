@@ -68,8 +68,10 @@ module.exports=function(sequelize, DataTypes){
 			  console.log('token '+token);
 				return new Promise(function (resolve, reject){
 					try{
+					  try{ 
 						var decodedJWT=jwt.verify(token, 'qwerty098'); 
-					  console.log('decodedJWT.token '+decodedJWT.token);
+					  }catch(e){console.log('jwt err '+e);}
+						console.log('decodedJWT.token '+decodedJWT.token);
 						var bytes=cryptojs.AES.decrypt(decodedJWT.token, 'abc123!@#!');
 						var tokenData=JSON.parse(bytes.toString(cryptojs.enc.Utf8)); 
 											 
@@ -99,10 +101,11 @@ module.exports=function(sequelize, DataTypes){
 				try{ console.log('type '+type);
 					var stringData=JSON.stringify({id:this.get('id'),type:type});
 					console.log('stringData '+stringData);
-					var encryptData=cryptojs.AES.encrypt(stringData, 'abc123!@#!').toString;
+					var encryptData=cryptojs.AES.encrypt(stringData, 'abc123!@#!').toString();
 					var token=jwt.sign({
 						token:encryptData
 					}, 'qwerty098');
+					console.log('generateToken '+token);
 					return token;
 				}
 				catch(e){return undefined();}
